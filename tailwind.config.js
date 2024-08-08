@@ -12,6 +12,19 @@ module.exports = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      colors: {
+        primary: "#2828D1",
+        primaryLight: "#0070FF",
+        secondary: "#BEE1FF",
+        primaryBg: "#345976",
+      },
+    },
+    fontFamily: {
+      clash: ["ClashDisplay-Regular", "sans-serif"],
+      clashmd: ["ClashDisplay-Medium", "sans-serif"],
+      clashsm: ["ClashDisplay-Semibold", "sans-serif"],
+      clashreg: ["ClashDisplay-Regular", "sans-serif"],
+      clashbold: ["ClashDisplay-Bold", "sans-serif"],
     },
   },
   plugins: [],
