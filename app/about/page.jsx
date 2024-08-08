@@ -3,8 +3,8 @@ import Image from "next/image";
 
 export default function AboutPage() {
   return (
-    <main className="pl-[300px] py-20 px-[3%]">
-      <div className="flex items-center justify-between">
+    <main className="pl-[300px] pt-12 pb-20 px-[3%]">
+      <div className="flex items-center justify-between sticky bg-white z-10 py-5 top-0">
         <h1 className="text-2xl font-clashmd">About</h1>
         <button className="bg-primary mr-5 rounded-full text-base font-clashmd text-white w-[157px] h-[53px] flex items-center justify-center">
           Update
