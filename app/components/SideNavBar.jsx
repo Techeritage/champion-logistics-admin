@@ -43,7 +43,9 @@ export default function SideNavBar() {
   return (
     <main className="w-[250px] fixed top-0 left-0 bottom-0">
       <div className="p-10">
-        <Image src="/logo.svg" width={56} height={56} alt="logo" />
+        <Link href="/">
+          <Image src="/logo.svg" width={56} height={56} alt="logo" />
+        </Link>
       </div>
       <div
         onClick={() => setShowNav(!showNav)}
