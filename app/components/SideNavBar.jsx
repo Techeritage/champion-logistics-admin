@@ -12,6 +12,20 @@ const navLinks = [
   {
     name: "Services",
     href: "/services",
+    submenu: [
+      {
+        name: "Sea Freight Forwarding",
+        href: "/services/sea-freight",
+      },
+      {
+        name: "Air Freight Forwarding",
+        href: "/services/air-freight",
+      },
+      {
+        name: "Palletisation",
+        href: "/services/palletisation",
+      },
+    ],
   },
   {
     name: "About",
@@ -50,16 +64,34 @@ export default function SideNavBar() {
           <div className="grid gap-3 relative pl-4">
             <div className="bg-[#f4f4f4] w-[1px] absolute left-0 top-3 bottom-3"></div>
             {navLinks.map((link, i) => (
-              <Link
-                className={`text-sm text-black flex items-center gap-3`}
-                key={i}
-                href={link.href}
-              >
-                {link.name}
-                {pathName === link.href && (
-                  <div className="w-[6px] h-[6px] rounded-full bg-primary"></div>
+              <div key={i}>
+                <Link
+                  className={`text-sm text-black flex items-center gap-3`}
+                  href={link.href}
+                >
+                  {link.name}
+                  {pathName === link.href && (
+                    <div className="w-[6px] h-[6px] rounded-full bg-primary"></div>
+                  )}
+                </Link>
+                {/* Check if the link has a submenu */}
+                {pathName.startsWith("/services") && link.submenu && (
+                  <div className="ml-1 pl-4 pt-2 my-3 transition-all duration-200 grid gap-2 border-l border-[#f4f4f4]">
+                    {link.submenu.map((sublink, j) => (
+                      <Link
+                        className={`text-sm text-black whitespace-nowrap flex items-center gap-3`}
+                        key={j}
+                        href={sublink.href}
+                      >
+                        {sublink.name}
+                        {pathName === sublink.href && (
+                          <div className="w-[4px] h-[4px] rounded-full bg-primary"></div>
+                        )}
+                      </Link>
+                    ))}
+                  </div>
                 )}
-              </Link>
+              </div>
             ))}
           </div>
         </div>
