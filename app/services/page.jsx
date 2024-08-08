@@ -80,6 +80,17 @@ export default function ServicePage() {
           </div>
         </section>
       ))}
+      <section className="w-full pl-7 mt-10">
+        <div className="border flex items-center justify-center border-[#898787F4] border-dashed h-[362px] relative rounded-[10px] p-10">
+          <div className="absolute top-[-17px] left-[150px] border bg-white border-[#f4f4f4]/95 rounded-full py-[5px] px-[30px] text-sm font-clashmd">
+            Ser
+          </div>
+          {/**Form */}
+          <div className="py-[15px] w-fit mx-auto px-[50px] rounded-full bg-primary text-white font-clashmd">
+            Add a new service
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
