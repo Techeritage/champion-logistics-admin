@@ -7,6 +7,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { app } from "../utils/firebase";
+import { useState } from "react";
 
 const storage = getStorage(app);
 
