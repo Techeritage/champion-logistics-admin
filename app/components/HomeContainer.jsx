@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   getStorage,
   ref,
@@ -8,37 +8,146 @@ import {
 } from "firebase/storage";
 import Image from "next/image";
 import { app } from "../utils/firebase";
+import { getHomePage } from "../libs/Powerhouse";
+import { HomeSkeleton } from "./loader";
 const storage = getStorage(app);
 
 export default function HomeContainer() {
   const numberToWords = ["One", "Two", "Three", "Four", "Five"];
 
+  //uploading state
   const [uploading, setUploading] = useState({
     headerImage: false,
     profileImage: false,
     // Add more keys as needed
   });
 
+  //loading state
   const [uploadingState, setUploadingState] = useState({});
   const [uploadingState2, setUploadingState2] = useState({});
+  const [loading, setLoading] = useState(true);
 
-  //state1 and handler
-  const [header, setHeader] = useState({
+  //state1
+  const [header1, setHeader1] = useState("");
+  const [descriptionText1, setDescriptionText1] = useState("");
+  const [bannerImage, setBannerImage] = useState("");
+
+  //state2 and handler
+  const [header2, setHeader2] = useState("");
+  const [descriptionText2, setDescriptionText2] = useState("");
+  const [subHeader2, setSubHeader2] = useState("");
+  const [about, setAbout] = useState({
     header: "",
+    subHeader: "",
     desc: "",
-    image: "",
+    imageText: Array(5).fill({ image: "", desc: "" }), // Initial empty images and descriptions
   });
 
-  const handleHeaderChange = (e) => {
+  const handleAboutChange = (e) => {
     const { name, value } = e.target;
 
-    setHeader((prevHeader) => ({
-      ...prevHeader,
+    setAbout((prevAbout) => ({
+      ...prevAbout,
       [name]: value,
     }));
   };
 
-  // Handle file change and upload
+  const handleAboutDescriptionChange = (event, index) => {
+    const { value } = event.target;
+    setAbout((prevAbout) => ({
+      ...prevAbout,
+      imageText: prevAbout.imageText.map((item, i) =>
+        i === index ? { ...item, desc: value } : item
+      ),
+    }));
+  };
+
+  //state3 and handler
+  const [header3, setHeader3] = useState("");
+  const [descriptionText3, setDescriptionText3] = useState("");
+  const [subHeader3, setSubHeader3] = useState("");
+  const [services, setServices] = useState({
+    header: "",
+    subHeader: "",
+    desc: "",
+    imageText: Array(3).fill({ image: "", desc1: "", desc2: "" }), // Initial empty images and descriptions
+  });
+
+  const handleServicesChange = (e) => {
+    const { name, value } = e.target;
+
+    setServices((prevAbout) => ({
+      ...prevAbout,
+      [name]: value,
+    }));
+  };
+
+  const handleServiceDescriptionChange = (event, index) => {
+    const { value } = event.target;
+    setServices((prevAbout) => ({
+      ...prevAbout,
+      imageText: prevAbout.imageText.map((item, i) =>
+        i === index ? { ...item, desc1: value } : item
+      ),
+    }));
+  };
+
+  const handleServiceDescriptionChange2 = (event, index) => {
+    const { value } = event.target;
+    setServices((prevAbout) => ({
+      ...prevAbout,
+      imageText: prevAbout.imageText.map((item, i) =>
+        i === index ? { ...item, desc2: value } : item
+      ),
+    }));
+  };
+
+  //state4
+  const [faqs, setFaqs] = useState([
+    { content: "", subContent: "" },
+    { content: "", subContent: "" },
+    { content: "", subContent: "" },
+    { content: "", subContent: "" },
+  ]);
+
+  //useEffect
+  const fetchHomepage = async () => {
+    try {
+      const res = await getHomePage();
+      if (res) {
+        //set first state
+        setHeader1(res?.header1);
+        setDescriptionText1(res?.descriptionText1);
+        setBannerImage(res?.bannerImage);
+
+        //set second state
+        setHeader2(res?.header2);
+        setDescriptionText2(res?.descriptionText2);
+        setSubHeader2(res?.subHeader2);
+
+        //set third state
+        setHeader3(res?.header3);
+        setDescriptionText3(res?.descriptionText3);
+        setSubHeader3(res?.subHeader3);
+        //setBannerImage(res?.bannerImage);
+
+        setLoading(false);
+        console.log(res);
+      } else {
+        console.log(res);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchHomepage();
+  }, []);
+
+  // Handle file change and upload for state1
   const handleFileChange = async (event, imageType) => {
     const files = event.target.files;
     if (!files) return;
@@ -50,8 +159,7 @@ export default function HomeContainer() {
       case "headerImage":
         setUploadingState = (value) =>
           setUploading((prev) => ({ ...prev, headerImage: value }));
-        setImageState = (url) =>
-          setHeader((prevHeader) => ({ ...prevHeader, image: url }));
+        setImageState = (url) => setBannerImage(url);
         break;
       case "profileImage":
         setUploadingState = (value) =>
@@ -86,34 +194,7 @@ export default function HomeContainer() {
     setImageState(downloadURL);
   };
 
-  //state2 and handler
-  const [about, setAbout] = useState({
-    header: "",
-    subHeader: "",
-    desc: "",
-    imageText: Array(5).fill({ image: "", desc: "" }), // Initial empty images and descriptions
-  });
-
-  const handleAboutChange = (e) => {
-    const { name, value } = e.target;
-
-    setAbout((prevAbout) => ({
-      ...prevAbout,
-      [name]: value,
-    }));
-  };
-
-  const handleAboutDescriptionChange = (event, index) => {
-    const { value } = event.target;
-    setAbout((prevAbout) => ({
-      ...prevAbout,
-      imageText: prevAbout.imageText.map((item, i) =>
-        i === index ? { ...item, desc: value } : item
-      ),
-    }));
-  };
-
-  //about file change
+  //about file change state2
   const handleFileChange2 = async (event, index) => {
     const files = event.target.files;
     if (!files) return;
@@ -162,44 +243,7 @@ export default function HomeContainer() {
     });
   };
 
-  //state3 and handler
-  const [services, setServices] = useState({
-    header: "",
-    subHeader: "",
-    desc: "",
-    imageText: Array(3).fill({ image: "", desc1: "", desc2: "" }), // Initial empty images and descriptions
-  });
-
-  const handleServicesChange = (e) => {
-    const { name, value } = e.target;
-
-    setServices((prevAbout) => ({
-      ...prevAbout,
-      [name]: value,
-    }));
-  };
-
-  const handleServiceDescriptionChange = (event, index) => {
-    const { value } = event.target;
-    setServices((prevAbout) => ({
-      ...prevAbout,
-      imageText: prevAbout.imageText.map((item, i) =>
-        i === index ? { ...item, desc1: value } : item
-      ),
-    }));
-  };
-
-  const handleServiceDescriptionChange2 = (event, index) => {
-    const { value } = event.target;
-    setServices((prevAbout) => ({
-      ...prevAbout,
-      imageText: prevAbout.imageText.map((item, i) =>
-        i === index ? { ...item, desc2: value } : item
-      ),
-    }));
-  };
-
-  //services file change
+  //services file change state3
   const handleFileChange3 = async (event, index) => {
     const files = event.target.files;
     if (!files) return;
@@ -248,14 +292,7 @@ export default function HomeContainer() {
     });
   };
 
-  //state4 and handlers
-  const [faqs, setFaqs] = useState([
-    { content: "", subContent: "" },
-    { content: "", subContent: "" },
-    { content: "", subContent: "" },
-    { content: "", subContent: "" },
-  ]);
-
+  //for state4
   const handleFaqChange = (event, index, field) => {
     const { value } = event.target;
 
@@ -264,12 +301,20 @@ export default function HomeContainer() {
     );
   };
 
+  //submit
   const handleUpdate = () => {
-    console.log(header);
     console.log(about);
     console.log(services);
     console.log(faqs);
   };
+
+  if (loading) {
+    return (
+      <div className="pl-[300px] pt-12 pb-20 px-[3%]">
+        <HomeSkeleton />
+      </div>
+    );
+  }
 
   return (
     <main className="pl-[300px] pt-12 pb-20 px-[3%]">
@@ -294,8 +339,8 @@ export default function HomeContainer() {
               <label className="text-sm font-clashmd">Header 1</label>
               <input
                 type="text"
-                value={header.header}
-                onChange={handleHeaderChange}
+                value={header1}
+                onChange={(e) => setHeader1(e.target.value)}
                 name="header"
                 className="bg-[#f4f4f4] text-sm rounded-[10px] h-[61px] p-5 focus:outline-none"
               />
@@ -305,8 +350,8 @@ export default function HomeContainer() {
               <textarea
                 type="text"
                 name="desc"
-                value={header.desc}
-                onChange={handleHeaderChange}
+                value={descriptionText1}
+                onChange={(e) => setDescriptionText1(e.target.value)}
                 className="bg-[#f4f4f4] text-sm resize-none rounded-[10px] min-h-[89px] p-5 focus:outline-none"
               />
             </div>
@@ -344,10 +389,10 @@ export default function HomeContainer() {
                     </svg>
                   </div>
                 )}
-                {header.image ? (
+                {bannerImage ? (
                   <div className="relative">
                     <img
-                      src={header.image}
+                      src={bannerImage}
                       alt="Uploaded banner"
                       className="rounded-[10px] w-full min-h-[255px]"
                     />
@@ -391,8 +436,8 @@ export default function HomeContainer() {
                 <input
                   type="text"
                   name="header"
-                  value={about.header}
-                  onChange={handleAboutChange}
+                  value={header2}
+                  onChange={(e) => setHeader2(e.target.value)}
                   className="bg-[#f4f4f4] text-sm rounded-[10px] h-[61px] p-5 focus:outline-none"
                 />
               </div>
@@ -401,8 +446,8 @@ export default function HomeContainer() {
                 <input
                   type="text"
                   name="subHeader"
-                  value={about.subHeader}
-                  onChange={handleAboutChange}
+                  value={subHeader2}
+                  onChange={(e) => setSubHeader2(e.target.value)}
                   className="bg-[#f4f4f4] text-sm rounded-[10px] h-[61px] p-5 focus:outline-none"
                 />
               </div>
@@ -412,8 +457,8 @@ export default function HomeContainer() {
               <textarea
                 type="text"
                 name="desc"
-                value={about.desc}
-                onChange={handleAboutChange}
+                value={descriptionText2}
+                onChange={(e) => setDescriptionText2(e.target.value)}
                 className="bg-[#f4f4f4] text-sm resize-none rounded-[10px] min-h-[89px] p-5 focus:outline-none"
               />
             </div>
@@ -518,8 +563,8 @@ export default function HomeContainer() {
                 <input
                   type="text"
                   name="header"
-                  value={services.header}
-                  onChange={handleServicesChange}
+                  value={header3}
+                  onChange={(e) => setHeader3(e.target.value)}
                   className="bg-[#f4f4f4] text-sm rounded-[10px] h-[61px] p-5 focus:outline-none"
                 />
               </div>
@@ -528,8 +573,8 @@ export default function HomeContainer() {
                 <input
                   type="text"
                   name="subHeader"
-                  value={services.subHeader}
-                  onChange={handleServicesChange}
+                  value={subHeader3}
+                  onChange={(e) => setSubHeader3(e.target.value)}
                   className="bg-[#f4f4f4] text-sm rounded-[10px] h-[61px] p-5 focus:outline-none"
                 />
               </div>
@@ -539,8 +584,8 @@ export default function HomeContainer() {
               <textarea
                 type="text"
                 name="desc"
-                value={services.desc}
-                onChange={handleServicesChange}
+                value={descriptionText3}
+                onChange={(e) => setDescriptionText3(e.target.value)}
                 className="bg-[#f4f4f4] text-sm resize-none rounded-[10px] min-h-[89px] p-5 focus:outline-none"
               />
             </div>

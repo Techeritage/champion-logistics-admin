@@ -1,6 +1,6 @@
 import HomeContainer from "./components/HomeContainer";
 
-export default function HomePage() {
+export default async function HomePage() {
   return (
     <div>
       <HomeContainer />
