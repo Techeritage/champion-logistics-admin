@@ -1,7 +1,14 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { HomeSkeleton } from "./loader";
+import { getContactPage, updateContactpage } from "../libs/Powerhouse";
+import toast from "react-hot-toast";
 
 export default function ContactContainer() {
+  //state
+  const [loading, setLoading] = useState(true);
+  const [onSubmitLoading, setOnSubmitLoading] = useState(false);
+
   const [header, setHeader] = useState("");
   const [address, setAddress] = useState("");
   const [phones, setPhones] = useState({
@@ -32,12 +39,57 @@ export default function ContactContainer() {
     }));
   };
 
-  const handleUpdate = () => {
-    console.log(header);
-    console.log(chat);
-    console.log(address);
-    console.log(phones);
+  //useEffect
+  const fetchContactpage = async () => {
+    try {
+      const res = await getContactPage();
+      if (res) {
+        //set first state
+        setHeader(res?.header);
+        //set second state
+        setChat(res?.chatUs);
+        //set third state
+        setPhones(res?.callUs);
+        //set address
+        setAddress(res?.address);
+
+        setLoading(false);
+      } else {
+        console.log(res);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchContactpage();
+  }, []);
+
+  const handleUpdate = async () => {
+    setOnSubmitLoading(true);
+    try {
+      const res = await updateContactpage(header, address, phones, chat);
+      if (res.message === "Contact Page Content updated successfully") {
+        toast.success("Content Updated");
+        setOnSubmitLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("An error occured. Please try agian!");
+      setOnSubmitLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="pl-[300px] pt-12 pb-20 px-[3%]">
+        <HomeSkeleton />
+      </div>
+    );
+  }
 
   return (
     <main className="pl-[300px] pt-12 pb-20 px-[3%]">
@@ -45,9 +97,33 @@ export default function ContactContainer() {
         <h1 className="text-2xl font-clashmd">Contact</h1>
         <button
           onClick={handleUpdate}
-          className="bg-primary mr-5 rounded-full text-base font-clashmd text-white w-[157px] h-[53px] flex items-center justify-center"
+          disabled={onSubmitLoading}
+          className="bg-primary mr-5 rounded-full disabled:cursor-not-allowed text-base font-clashmd text-white w-[157px] h-[53px] flex items-center justify-center"
         >
-          Update
+          {onSubmitLoading ? (
+            <svg
+              className="h-5 w-5 animate-spin"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          ) : (
+            "Update"
+          )}
         </button>
       </div>
       {/**Header */}
@@ -81,7 +157,7 @@ export default function ContactContainer() {
               <input
                 type="text"
                 name="phone1" // Use unique name to identify the input
-                value={phones.phone1}
+                value={phones?.phone1}
                 onChange={handleInputChange}
                 className="bg-[#f4f4f4] text-sm rounded-[10px] h-[61px] p-5 focus:outline-none"
               />
@@ -91,7 +167,7 @@ export default function ContactContainer() {
               <input
                 type="text"
                 name="phone2" // Use unique name to identify the input
-                value={phones.phone2}
+                value={phones?.phone2}
                 onChange={handleInputChange}
                 className="bg-[#f4f4f4] text-sm rounded-[10px] h-[61px] p-5 focus:outline-none"
               />

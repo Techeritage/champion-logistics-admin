@@ -1,3 +1,4 @@
+import { Toaster } from "react-hot-toast";
 import "../public/ClashDisplay_Complete/Fonts/WEB/css/clash-display.css";
 import SideNavBar from "./components/SideNavBar";
 import "./globals.css";
@@ -13,6 +14,7 @@ export default function RootLayout({ children }) {
       <body className="font-clash">
         <SideNavBar />
         {children}
+        <Toaster />
       </body>
     </html>
   );

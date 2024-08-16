@@ -8,8 +8,9 @@ import {
 } from "firebase/storage";
 import Image from "next/image";
 import { app } from "../utils/firebase";
-import { getHomePage } from "../libs/Powerhouse";
+import { getHomePage, updateHomepage } from "../libs/Powerhouse";
 import { HomeSkeleton } from "./loader";
+import toast from "react-hot-toast";
 const storage = getStorage(app);
 
 export default function HomeContainer() {
@@ -26,6 +27,7 @@ export default function HomeContainer() {
   const [uploadingState, setUploadingState] = useState({});
   const [uploadingState2, setUploadingState2] = useState({});
   const [loading, setLoading] = useState(true);
+  const [onSubmitLoading, setOnSubmitLoading] = useState(false);
 
   //state1
   const [header1, setHeader1] = useState("");
@@ -36,79 +38,59 @@ export default function HomeContainer() {
   const [header2, setHeader2] = useState("");
   const [descriptionText2, setDescriptionText2] = useState("");
   const [subHeader2, setSubHeader2] = useState("");
-  const [about, setAbout] = useState({
-    header: "",
-    subHeader: "",
-    desc: "",
-    imageText: Array(5).fill({ image: "", desc: "" }), // Initial empty images and descriptions
-  });
-
-  const handleAboutChange = (e) => {
-    const { name, value } = e.target;
-
-    setAbout((prevAbout) => ({
-      ...prevAbout,
-      [name]: value,
-    }));
-  };
+  const [aboutImageTxt, setAboutImageTxt] = useState([]);
 
   const handleAboutDescriptionChange = (event, index) => {
     const { value } = event.target;
-    setAbout((prevAbout) => ({
-      ...prevAbout,
-      imageText: prevAbout.imageText.map((item, i) =>
-        i === index ? { ...item, desc: value } : item
-      ),
-    }));
+
+    setAboutImageTxt((prevAboutImageTxt) => {
+      if (!Array.isArray(prevAboutImageTxt)) {
+        return [];
+      }
+
+      const updated = prevAboutImageTxt.map((item, i) =>
+        i === index ? { ...item, content: value } : item
+      );
+      return updated;
+    });
   };
 
   //state3 and handler
   const [header3, setHeader3] = useState("");
   const [descriptionText3, setDescriptionText3] = useState("");
   const [subHeader3, setSubHeader3] = useState("");
-  const [services, setServices] = useState({
-    header: "",
-    subHeader: "",
-    desc: "",
-    imageText: Array(3).fill({ image: "", desc1: "", desc2: "" }), // Initial empty images and descriptions
-  });
-
-  const handleServicesChange = (e) => {
-    const { name, value } = e.target;
-
-    setServices((prevAbout) => ({
-      ...prevAbout,
-      [name]: value,
-    }));
-  };
+  const [serviceImageTxt, setServiceImageTxt] = useState([]);
 
   const handleServiceDescriptionChange = (event, index) => {
     const { value } = event.target;
-    setServices((prevAbout) => ({
-      ...prevAbout,
-      imageText: prevAbout.imageText.map((item, i) =>
-        i === index ? { ...item, desc1: value } : item
-      ),
-    }));
+    setServiceImageTxt((prevAboutImageTxt) => {
+      if (!Array.isArray(prevAboutImageTxt)) {
+        return [];
+      }
+
+      const updated = prevAboutImageTxt.map((item, i) =>
+        i === index ? { ...item, pointOne: value } : item
+      );
+      return updated;
+    });
   };
 
   const handleServiceDescriptionChange2 = (event, index) => {
     const { value } = event.target;
-    setServices((prevAbout) => ({
-      ...prevAbout,
-      imageText: prevAbout.imageText.map((item, i) =>
-        i === index ? { ...item, desc2: value } : item
-      ),
-    }));
+    setServiceImageTxt((prevAboutImageTxt) => {
+      if (!Array.isArray(prevAboutImageTxt)) {
+        return [];
+      }
+
+      const updated = prevAboutImageTxt.map((item, i) =>
+        i === index ? { ...item, pointTwo: value } : item
+      );
+      return updated;
+    });
   };
 
   //state4
-  const [faqs, setFaqs] = useState([
-    { content: "", subContent: "" },
-    { content: "", subContent: "" },
-    { content: "", subContent: "" },
-    { content: "", subContent: "" },
-  ]);
+  const [faqs, setFaqs] = useState([]);
 
   //useEffect
   const fetchHomepage = async () => {
@@ -124,15 +106,19 @@ export default function HomeContainer() {
         setHeader2(res?.header2);
         setDescriptionText2(res?.descriptionText2);
         setSubHeader2(res?.subHeader2);
+        setAboutImageTxt(res?.aboutImageText);
 
         //set third state
         setHeader3(res?.header3);
         setDescriptionText3(res?.descriptionText3);
         setSubHeader3(res?.subHeader3);
+        setServiceImageTxt(res?.serviceImageText);
         //setBannerImage(res?.bannerImage);
 
+        //set faqs
+        setFaqs(res?.faqs);
+
         setLoading(false);
-        console.log(res);
       } else {
         console.log(res);
         setLoading(false);
@@ -200,19 +186,23 @@ export default function HomeContainer() {
     if (!files) return;
 
     const file = files[0];
-    setUploadingState((prev) => ({ ...prev, [index]: true })); // Set uploading state for this index
+    setUploadingState((prev) => ({ ...prev, [index]: true }));
 
-    // Upload file and get the URL
-    const downloadURL = await uploadFile2(file); // Ensure uploadFile is defined
+    const downloadURL = await uploadFile2(file);
 
-    setAbout((prevAbout) => ({
-      ...prevAbout,
-      imageText: prevAbout.imageText.map((item, i) =>
+    setAboutImageTxt((prevAbout) => {
+      // Ensure prevAbout is an array
+      if (!Array.isArray(prevAbout)) {
+        console.error("prevAbout is not an array:", prevAbout);
+        return prevAbout; // or return [] to reset the state to an empty array
+      }
+
+      return prevAbout.map((item, i) =>
         i === index ? { ...item, image: downloadURL } : item
-      ),
-    }));
+      );
+    });
 
-    setUploadingState((prev) => ({ ...prev, [index]: false })); // Reset uploading state
+    setUploadingState((prev) => ({ ...prev, [index]: false }));
   };
 
   const uploadFile2 = async (file) => {
@@ -254,12 +244,17 @@ export default function HomeContainer() {
     // Upload file and get the URL
     const downloadURL = await uploadFile3(file); // Ensure uploadFile is defined
 
-    setServices((prevAbout) => ({
-      ...prevAbout,
-      imageText: prevAbout.imageText.map((item, i) =>
+    setServiceImageTxt((prevAbout) => {
+      // Ensure prevAbout is an array
+      if (!Array.isArray(prevAbout)) {
+        console.error("prevAbout is not an array:", prevAbout);
+        return prevAbout; // or return [] to reset the state to an empty array
+      }
+
+      return prevAbout.map((item, i) =>
         i === index ? { ...item, image: downloadURL } : item
-      ),
-    }));
+      );
+    });
 
     setUploadingState2((prev) => ({ ...prev, [index]: false })); // Reset uploading state
   };
@@ -302,10 +297,32 @@ export default function HomeContainer() {
   };
 
   //submit
-  const handleUpdate = () => {
-    console.log(about);
-    console.log(services);
-    console.log(faqs);
+  const handleUpdate = async () => {
+    setOnSubmitLoading(true);
+    try {
+      const res = await updateHomepage(
+        header1,
+        descriptionText1,
+        bannerImage,
+        header2,
+        subHeader2,
+        descriptionText2,
+        aboutImageTxt,
+        header3,
+        subHeader3,
+        setDescriptionText3,
+        serviceImageTxt,
+        faqs
+      );
+      if (res.message === "Home Page Content updated successfully") {
+        toast.success("Content Updated");
+        setOnSubmitLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("An error occured. Please try agian!");
+      setOnSubmitLoading(false);
+    }
   };
 
   if (loading) {
@@ -322,9 +339,33 @@ export default function HomeContainer() {
         <h1 className="text-2xl font-clashmd">Homepage</h1>
         <button
           onClick={handleUpdate}
-          className="bg-primary mr-5 rounded-full text-base font-clashmd text-white w-[157px] h-[53px] flex items-center justify-center"
+          disabled={onSubmitLoading}
+          className="bg-primary mr-5 rounded-full disabled:cursor-not-allowed text-base font-clashmd text-white w-[157px] h-[53px] flex items-center justify-center"
         >
-          Update
+          {onSubmitLoading ? (
+            <svg
+              className="h-5 w-5 animate-spin"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          ) : (
+            "Update"
+          )}
         </button>
       </div>
       {/**Hero */}
@@ -463,16 +504,16 @@ export default function HomeContainer() {
               />
             </div>
             <div className="grid grid-cols-5 gap-5">
-              {[0, 0, 0, 0, 0].map((_, index) => (
+              {aboutImageTxt?.map((txt, index) => (
                 <div className="grid gap-3" key={index}>
                   <label className="text-sm font-clashmd">
                     {" "}
                     {`Image ${numberToWords[index]}`}
                   </label>
                   <div className="relative h-[166px]">
-                    {about.imageText[index].image ? (
+                    {txt?.image ? (
                       <img
-                        src={about.imageText[index].image}
+                        src={txt?.image}
                         alt={`Uploaded Image ${numberToWords[index]}`}
                         className="w-full h-full object-cover rounded-[16px]"
                       />
@@ -538,9 +579,9 @@ export default function HomeContainer() {
                     <textarea
                       type="text"
                       name={`desc-${index}`}
-                      value={about.imageText[index]?.desc || ""}
+                      value={txt?.content || ""}
                       onChange={(e) => handleAboutDescriptionChange(e, index)}
-                      className="bg-[#f4f4f4] text-sm resize-none rounded-[16px] min-h-[113px] p-2 py-3 focus:outline-none"
+                      className="bg-[#f4f4f4] no-scrollbar text-sm resize-none rounded-[16px] min-h-[113px] p-2 py-3 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -590,16 +631,16 @@ export default function HomeContainer() {
               />
             </div>
             <div className="grid grid-cols-3 gap-5">
-              {[0, 0, 0].map((_, index) => (
+              {serviceImageTxt.map((txt, index) => (
                 <div className="grid gap-3" key={index}>
                   <label className="text-sm font-clashmd">
                     {" "}
                     {`Image ${numberToWords[index]}`}
                   </label>
                   <div className="relative">
-                    {services.imageText[index].image ? (
+                    {txt?.image ? (
                       <img
-                        src={services.imageText[index].image}
+                        src={txt.image}
                         alt={`Uploaded Image ${numberToWords[index]}`}
                         className="w-full h-[166px] object-cover rounded-[16px]"
                       />
@@ -665,7 +706,7 @@ export default function HomeContainer() {
                     <input
                       type="text"
                       name={`desc1-${index}`}
-                      value={services.imageText[index]?.desc1 || ""}
+                      value={txt?.pointOne || ""}
                       onChange={(e) => handleServiceDescriptionChange(e, index)}
                       className="bg-[#f4f4f4] text-sm rounded-[16px] h-[55px] p-5 focus:outline-none"
                     />
@@ -677,7 +718,7 @@ export default function HomeContainer() {
                     <input
                       type="text"
                       name={`desc2-${index}`}
-                      value={services.imageText[index]?.desc2 || ""}
+                      value={txt?.pointTwo || ""}
                       onChange={(e) =>
                         handleServiceDescriptionChange2(e, index)
                       }

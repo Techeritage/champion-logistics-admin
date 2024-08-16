@@ -13,7 +13,50 @@ export const getHomePage = async () => {
   }
 };
 
-export const updateHomepage = async (name, email, password) => {
+export const getContactPage = async () => {
+  try {
+    const res = await fetch(
+      "https://champions-logistics-cms.onrender.com/contactpage/",
+      {
+        cache: "no-store",
+      }
+    );
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAboutPage = async () => {
+  try {
+    const res = await fetch(
+      "https://champions-logistics-cms.onrender.com/aboutpage/",
+      {
+        cache: "no-store",
+      }
+    );
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateHomepage = async (
+  header1,
+  descriptionText1,
+  bannerImage,
+  header2,
+  subHeader2,
+  descriptionText2,
+  aboutImageText,
+  header3,
+  subHeader3,
+  descriptionText3,
+  serviceImageText,
+  faqs
+) => {
   try {
     const response = await fetch(
       "https://champions-logistics-cms.onrender.com/homepage/",
@@ -24,9 +67,18 @@ export const updateHomepage = async (name, email, password) => {
           // Add any other headers you need here
         },
         body: JSON.stringify({
-          name,
-          email,
-          password,
+          header1,
+          descriptionText1,
+          bannerImage,
+          header2,
+          subHeader2,
+          descriptionText2,
+          aboutImageText,
+          header3,
+          subHeader3,
+          descriptionText3,
+          serviceImageText,
+          faqs,
         }),
       }
     );
@@ -36,7 +88,67 @@ export const updateHomepage = async (name, email, password) => {
     }
 
     const data = await response.json();
-    console.log("Success:", data); // Handle the response data
+    return data;
+  } catch (error) {
+    console.error("There was a problem with the fetch operation:", error); // Handle errors
+  }
+};
+export const updateContactpage = async (header, address, callUs, chatUs) => {
+  try {
+    const response = await fetch(
+      "https://champions-logistics-cms.onrender.com/contactpage/",
+      {
+        method: "PUT", // Specify the HTTP method
+        headers: {
+          "Content-Type": "application/json", // Set the content type to JSON
+          // Add any other headers you need here
+        },
+        body: JSON.stringify({
+          header,
+          address,
+          callUs,
+          chatUs,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok " + response.statusText);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("There was a problem with the fetch operation:", error); // Handle errors
+  }
+};
+
+export const updateAboutpage = async (header, key1, key2, key3, key4) => {
+  try {
+    const response = await fetch(
+      "https://champions-logistics-cms.onrender.com/aboutpage/",
+      {
+        method: "PUT", // Specify the HTTP method
+        headers: {
+          "Content-Type": "application/json", // Set the content type to JSON
+          // Add any other headers you need here
+        },
+        body: JSON.stringify({
+          header,
+          key1,
+          key2,
+          key3,
+          key4,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok " + response.statusText);
+    }
+
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error("There was a problem with the fetch operation:", error); // Handle errors
   }
