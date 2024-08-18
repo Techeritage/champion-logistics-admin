@@ -340,7 +340,7 @@ export default function HomeContainer() {
         <button
           onClick={handleUpdate}
           disabled={onSubmitLoading}
-          className="bg-primary mr-5 rounded-full disabled:cursor-not-allowed text-base font-clashmd text-white w-[157px] h-[53px] flex items-center justify-center"
+          className="bg-primary mr-5 hover:bg-white hover:text-primary transition-all duration-150 border-2 border-primary rounded-full disabled:cursor-not-allowed text-base font-clashmd text-white w-[157px] h-[51px] flex items-center justify-center"
         >
           {onSubmitLoading ? (
             <svg
@@ -393,7 +393,7 @@ export default function HomeContainer() {
                 name="desc"
                 value={descriptionText1}
                 onChange={(e) => setDescriptionText1(e.target.value)}
-                className="bg-[#f4f4f4] text-sm resize-none rounded-[10px] min-h-[89px] p-5 focus:outline-none"
+                className="bg-[#f4f4f4] custom-scrollbar text-sm resize-none rounded-[10px] min-h-[89px] p-5 focus:outline-none"
               />
             </div>
             <div className="grid gap-3">
@@ -500,7 +500,7 @@ export default function HomeContainer() {
                 name="desc"
                 value={descriptionText2}
                 onChange={(e) => setDescriptionText2(e.target.value)}
-                className="bg-[#f4f4f4] text-sm resize-none rounded-[10px] min-h-[89px] p-5 focus:outline-none"
+                className="bg-[#f4f4f4] custom-scrollbar text-sm resize-none rounded-[10px] min-h-[89px] p-5 focus:outline-none"
               />
             </div>
             <div className="grid grid-cols-5 gap-5">
@@ -581,7 +581,7 @@ export default function HomeContainer() {
                       name={`desc-${index}`}
                       value={txt?.content || ""}
                       onChange={(e) => handleAboutDescriptionChange(e, index)}
-                      className="bg-[#f4f4f4] no-scrollbar text-sm resize-none rounded-[16px] min-h-[113px] p-2 py-3 focus:outline-none"
+                      className="bg-[#f4f4f4] custom-scrollbar text-sm resize-none rounded-[16px] min-h-[113px] p-2 py-3 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -627,7 +627,7 @@ export default function HomeContainer() {
                 name="desc"
                 value={descriptionText3}
                 onChange={(e) => setDescriptionText3(e.target.value)}
-                className="bg-[#f4f4f4] text-sm resize-none rounded-[10px] min-h-[89px] p-5 focus:outline-none"
+                className="bg-[#f4f4f4] text-sm custom-scrollbar resize-none rounded-[10px] min-h-[89px] p-5 focus:outline-none"
               />
             </div>
             <div className="grid grid-cols-3 gap-5">
@@ -760,7 +760,7 @@ export default function HomeContainer() {
                     id={`subContent-${index}`}
                     value={faq.subContent}
                     onChange={(e) => handleFaqChange(e, index, "subContent")}
-                    className="bg-[#f4f4f4] text-sm resize-none rounded-[10px] min-h-[89px] p-5 focus:outline-none"
+                    className="bg-[#f4f4f4] custom-scrollbar text-sm resize-none rounded-[10px] min-h-[89px] p-5 focus:outline-none"
                   />
                 </div>
               </div>

@@ -98,7 +98,7 @@ export default function ContactContainer() {
         <button
           onClick={handleUpdate}
           disabled={onSubmitLoading}
-          className="bg-primary mr-5 rounded-full disabled:cursor-not-allowed text-base font-clashmd text-white w-[157px] h-[53px] flex items-center justify-center"
+          className="bg-primary mr-5 hover:bg-white hover:text-primary transition-all duration-150 border-2 border-primary rounded-full disabled:cursor-not-allowed text-base font-clashmd text-white w-[157px] h-[53px] flex items-center justify-center"
         >
           {onSubmitLoading ? (
             <svg

@@ -21,8 +21,6 @@ export default function AboutContainer() {
     profileImage: false,
     // Add more keys as needed
   });
-  const [uploadingState, setUploadingState] = useState({});
-  const [uploadingState2, setUploadingState2] = useState({});
   const [loading, setLoading] = useState(true);
   const [loading2, setLoading2] = useState(false);
   const [onSubmitLoading, setOnSubmitLoading] = useState(false);
@@ -236,7 +234,7 @@ export default function AboutContainer() {
         <button
           onClick={handleUpdate}
           disabled={onSubmitLoading}
-          className="bg-primary mr-5 rounded-full disabled:cursor-not-allowed text-base font-clashmd text-white w-[157px] h-[53px] flex items-center justify-center"
+          className="bg-primary hover:bg-white hover:text-primary transition-all duration-150 border-2 border-primary mr-5 rounded-full disabled:cursor-not-allowed text-base font-clashmd text-white w-[157px] h-[51px] flex items-center justify-center"
         >
           {onSubmitLoading ? (
             <svg
@@ -330,7 +328,7 @@ export default function AboutContainer() {
                     <img
                       src={key1?.bannerImage}
                       alt="Uploaded banner"
-                      className="rounded-[10px] w-full min-h-[255px]"
+                      className="rounded-[10px] w-full h-[255px]"
                     />
                   </div>
                 ) : (
@@ -372,7 +370,7 @@ export default function AboutContainer() {
                 name="descriptionText"
                 value={key1.descriptionText}
                 onChange={handleInputChange}
-                className="bg-[#f4f4f4] text-sm resize-none rounded-[10px] min-h-[214px] p-5 focus:outline-none"
+                className="bg-[#f4f4f4] custom-scrollbar text-sm resize-none rounded-[10px] min-h-[214px] p-5 focus:outline-none"
               />
             </div>
           </div>
@@ -425,7 +423,7 @@ export default function AboutContainer() {
                     <img
                       src={key2.bannerImage}
                       alt="Uploaded banner"
-                      className="rounded-[10px] w-full min-h-[255px]"
+                      className="rounded-[10px] w-full h-[255px] object-cover"
                     />
                   </div>
                 ) : (
@@ -469,7 +467,7 @@ export default function AboutContainer() {
                 name="descriptionText"
                 value={key2.descriptionText}
                 onChange={handleInputChange2}
-                className="bg-[#f4f4f4] text-sm resize-none rounded-[10px] min-h-[214px] p-5 focus:outline-none"
+                className="bg-[#f4f4f4] text-sm custom-scrollbar resize-none rounded-[10px] min-h-[214px] p-5 focus:outline-none"
               />
             </div>
           </div>

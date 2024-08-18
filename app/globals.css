@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -21,7 +21,7 @@
 }
 
 .shimmer-animation::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   right: 0;
@@ -48,4 +48,23 @@
   /* IE and Edge */
   scrollbar-width: none;
   /* Firefox */
+}
+
+/* Custom Scrollbar for the dropdown */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1;
+  border-radius: 10px;
+  border: 2px solid #f4f4f4;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #a8a8a8;
 }

@@ -1,45 +1,57 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
-
-const navLinks = [
-  {
-    name: "Homepage",
-    href: "/",
-  },
-  {
-    name: "Services",
-    href: "/services",
-    submenu: [
-      {
-        name: "Sea Freight Forwarding",
-        href: "/services/sea-freight",
-      },
-      {
-        name: "Air Freight Forwarding",
-        href: "/services/air-freight",
-      },
-      {
-        name: "Palletisation",
-        href: "/services/palletisation",
-      },
-    ],
-  },
-  {
-    name: "About",
-    href: "/about",
-  },
-  {
-    name: "Contact",
-    href: "/contact",
-  },
-];
+import React, { useEffect, useState } from "react";
+import { getAllServices } from "../libs/Powerhouse";
 
 export default function SideNavBar() {
   const pathName = usePathname();
   const [showNav, setShowNav] = useState(true);
+  const [navLinks, setNavLinks] = useState([
+    {
+      name: "Homepage",
+      href: "/",
+    },
+    {
+      name: "Services",
+      href: "/services",
+      submenu: [],
+    },
+    {
+      name: "About",
+      href: "/about",
+    },
+    {
+      name: "Contact",
+      href: "/contact",
+    },
+  ]);
+
+  useEffect(() => {
+    const fetchAllServices = async () => {
+      const res = await getAllServices();
+      if (res) {
+        setNavLinks((prevNavLinks) =>
+          prevNavLinks.map((link) =>
+            link.name === "Services"
+              ? {
+                  ...link,
+                  submenu: res.map((service) => ({
+                    name: service.header, // Adjust according to the structure of your service data
+                    href: `/services/${service._id}`, // Assuming your service object has a 'slug' property
+                  })),
+                }
+              : link
+          )
+        );
+      }
+    };
+
+    fetchAllServices();
+  }, []);
+
   return (
     <main className="w-[250px] fixed top-0 left-0 bottom-0">
       <div className="px-10 pt-7 pb-10">
@@ -68,7 +80,7 @@ export default function SideNavBar() {
             {navLinks.map((link, i) => (
               <div key={i}>
                 <Link
-                  className={`text-sm text-black flex items-center gap-3`}
+                  className={`text-sm hover:text-primary text-black flex items-center gap-3`}
                   href={link.href}
                 >
                   {link.name}
@@ -77,22 +89,23 @@ export default function SideNavBar() {
                   )}
                 </Link>
                 {/* Check if the link has a submenu */}
-                {pathName.startsWith("/services") && link.submenu && (
-                  <div className="ml-1 pl-4 pt-2 my-3 transition-all duration-200 grid gap-2 border-l border-[#f4f4f4]">
-                    {link.submenu.map((sublink, j) => (
-                      <Link
-                        className={`text-sm text-black whitespace-nowrap flex items-center gap-3`}
-                        key={j}
-                        href={sublink.href}
-                      >
-                        {sublink.name}
-                        {pathName === sublink.href && (
-                          <div className="w-[4px] h-[4px] rounded-full bg-primary"></div>
-                        )}
-                      </Link>
-                    ))}
-                  </div>
-                )}
+                {pathName.startsWith("/services") &&
+                  link.submenu?.length > 0 && (
+                    <div className="ml-1 pl-4 pt-2 my-3 transition-all duration-200 grid gap-2 border-l border-[#f4f4f4]">
+                      {link.submenu.map((sublink, j) => (
+                        <Link
+                          className={`text-sm text-black hover:text-primary whitespace-nowrap flex items-center gap-3`}
+                          key={j}
+                          href={sublink.href}
+                        >
+                          {sublink.name}
+                          {pathName === sublink.href && (
+                            <div className="w-[4px] h-[4px] rounded-full bg-primary"></div>
+                          )}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
               </div>
             ))}
           </div>
