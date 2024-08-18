@@ -80,7 +80,7 @@ export default function SideNavBar() {
             {navLinks.map((link, i) => (
               <div key={i}>
                 <Link
-                  className={`text-sm hover:text-primary text-black flex items-center gap-3`}
+                  className={`text-sm hover:text-primary w-fit text-black flex items-center gap-3`}
                   href={link.href}
                 >
                   {link.name}
@@ -94,7 +94,7 @@ export default function SideNavBar() {
                     <div className="ml-1 pl-4 pt-2 my-3 transition-all duration-200 grid gap-2 border-l border-[#f4f4f4]">
                       {link.submenu.map((sublink, j) => (
                         <Link
-                          className={`text-sm text-black hover:text-primary whitespace-nowrap flex items-center gap-3`}
+                          className={`text-sm text-black w-fit hover:text-primary whitespace-nowrap flex items-center gap-3`}
                           key={j}
                           href={sublink.href}
                         >
