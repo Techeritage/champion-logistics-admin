@@ -207,11 +207,14 @@ export default function ServiceContainer() {
         descriptionText,
         keys
       );
-      if (res.message === "Service created successfully") {
-        toast.success("Service Created");
-        setOnSubmitLoading2(false);
-        setIsAdd(false);
-      }
+      if (res.ok) {  // Check if the response was successful
+      toast.success("Service Created");
+      setOnSubmitLoading2(false);
+      setIsAdd(false);
+    } else {
+      toast.error("Failed to create service. Please try again!");
+      setOnSubmitLoading2(false);
+    }
     } catch (error) {
       console.log(error);
       toast.error("An error occured. Please try agian!");
